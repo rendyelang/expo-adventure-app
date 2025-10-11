@@ -7,6 +7,10 @@ export default function RootLayout() {
       screenOptions={{
         headerShown: false,
       }}
-    />
+    >
+      <Stack.Screen name="splash"/>
+      <Stack.Screen name="home"/>
+      <Stack.Screen name="Counter" />
+    </Stack>
   );
 }

@@ -1,16 +1,19 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Alert, ImageBackground, Text, View } from "react-native";
-import forestImg from '../assets/images/forest.png';
-import CustomButton from '../components/CustomButton';
+import { useRouter } from 'expo-router';
+import { ImageBackground, Text, View } from "react-native";
+import forestImg from '../../assets/images/forest.png';
+import CustomButton from '../../components/CustomButton';
 
 export default function Index() {
-  const handleButtonPress = () => {
-    Alert.alert(
-      "Under Maintenance",
-      "This feature is currently under maintenance. Please try again later.",
-      [{ text: "OK" }]
-    );
-  };
+  // const handleButtonPress = () => {
+  //   // Alert.alert(
+  //   //   "Under Maintenance",
+  //   //   "This feature is currently under maintenance. Please try again later.",
+  //   //   [{ text: "OK" }]
+  //   // );
+  // };
+
+  const router = useRouter()
 
   return (
     <ImageBackground source={forestImg} className="flex-1 justify-end" resizeMode="cover">
@@ -24,13 +27,13 @@ export default function Index() {
             Life&apos;s too short to stay in one place. Find your next favorite city, 
             beach, or mountain and let&apos;s get moving!
           </Text>
-          <CustomButton 
-            title="Start Exploring"
-            backgroundColor="bg-teal-500"
-            textColor="text-black"
-            width="w-[45%]"
-            onPress={handleButtonPress}
-          />
+            <CustomButton 
+              title="Start Exploring"
+              backgroundColor="bg-teal-500"
+              textColor="text-black"
+              width="w-[45%]"
+              onPress={() => router.push('/home/DetailPage')}
+            />
         </View>
       </LinearGradient>
     </ImageBackground>
