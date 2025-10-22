@@ -1,50 +1,21 @@
-# Welcome to your Expo app 👋
+# Welcome to my Adventure App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is an assignment of mobile programming subject
 
-## Get started
+## Splash & Welcome Screen
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/880fc19d-baca-4f62-97ea-b5e57114eeac" alt="Splash Screen" width="45%" />
+  <img src="https://github.com/user-attachments/assets/dd874c96-becc-437f-b38e-3c29268c45c1" alt="Welcome Screen" width="45%" />
+</p>
 
-1. Install dependencies
+## Home & Detail Screen
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6e82f185-f934-4370-a189-493f8646ef81" alt="Home Screen" width="45%" />
+  <img src="https://github.com/user-attachments/assets/72eaf493-36cd-40d5-bdc0-5c2ff539b544" alt="Detail Screen" width="45%" />
+</p>
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Wishlist & Ticket Screen
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6d911c49-6b51-4163-83a9-f2516f3b7471" alt="Wishlist Screen" width="45%" />
+  <img src="https://github.com/user-attachments/assets/df90e8dd-d34e-4279-bd49-e681b7005271" alt="Ticket Screen" width="45%" />
+</p>
