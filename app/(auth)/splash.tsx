@@ -1,14 +1,14 @@
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { Image, Text, View } from "react-native";
-import splashLogo from '../assets/images/react-logo.png';
+import splashLogo from '../../assets/images/react-logo.png';
 
 export default function SplashScreen() {
     const router = useRouter()
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            router.replace('/home')
+            router.replace('/Welcome')
         }, 5000)
         return () => clearTimeout(timer)
     }, [])

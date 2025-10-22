@@ -10,7 +10,12 @@ module.exports = {
     extend: {
       colors: {
         "bg-base": "#F3F2E7",
-        "recom-card": "#131E2E"
+        "recom-card": "#131E2E",
+        "secondary": "#FF7043",
+        "tertier": "#EAE8D3"
+      },
+      fontFamily: {
+        jakarta: ['Jakarta-Regular']
       }
     },
   },

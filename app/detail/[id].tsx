@@ -3,14 +3,30 @@ import CustomButton from "@/components/CustomButton";
 import RatingCard from "@/components/RatingCard";
 import RecommendCard from "@/components/RecommendCard";
 import TestiCard from "@/components/TestiCard";
+import { Text } from "@/components/Text";
+import destinations from "@/data/destinations";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { BlurView } from "expo-blur";
+import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ImageBackground, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import CountryFlag from 'react-native-country-flag';
-import bgHero from "../../assets/images/labuan-bajo1.jpg";
 
 const DetailPage = () => {
+    const { id } = useLocalSearchParams();
+    
+    // Cari destinasi berdasarkan ID
+    const destination = destinations.find(item => item.id === parseInt(id));
+    
+    // Jika tidak ditemukan, tampilkan pesan error
+    if (!destination) {
+        return (
+            <View className="bg-bg-base flex-1 justify-center items-center">
+                <Text className="text-white text-xl">Destination not found</Text>
+            </View>
+        );
+    }
+
     const [qty, setQty] = useState(1)
     const basePrice = 10000
     const totalAmount = qty * basePrice
@@ -30,33 +46,43 @@ const DetailPage = () => {
         }
     ]
 
+    // Mapping country code dari location
+    const getCountryCode = (location) => {
+        const countryMap = {
+            'Indonesia': 'ID',
+            'Italy': 'IT',
+            'Netherlands': 'NL'
+        };
+        return countryMap[location] || 'id';
+    };
+
     return (
         <View className="bg-bg-base">
             <ScrollView>
-                <ImageBackground className="px-7 py-10" source={bgHero} resizeMode="cover">
+                <ImageBackground className="px-7 py-10" source={destination.image} resizeMode="cover">
                     <View className="flex-row justify-between">
                         <BackButton />
                         <View style={[styles.weatherContainer]}>
                             <Ionicons className="self-start" name="sunny-outline" size={24} color="white" />
                             <Text className="text-xl text-white font-bold self-start">
-                                24° C
+                                {destination.derajat}° C
                             </Text>
                         </View>
                     </View>
                     <View className="pt-32 flex-col gap-y-4">
-                        <RatingCard />
-                        <Text className="text-4xl font-semibold text-white">Banda Neira</Text>
-                        <Text className="text-gray-100">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit veritatis doloremque animi tempore illum eos corrupti?</Text>
+                        <RatingCard rating={destination.rating} />
+                        <Text className="text-4xl font-semibold text-white">{destination.name}</Text>
+                        <Text className="text-gray-100">{destination.description}</Text>
                     </View>
                 </ImageBackground>
                 <View className="px-7 pt-10 pb-44 relative">
                     <View className="flex-row gap-x-3 items-center">
                         <View style={styles.flagWrapper}>
-                            <CountryFlag isoCode={"id"} size={36} />
+                            <CountryFlag isoCode={getCountryCode(destination.location)} size={36} />
                         </View>
-                        <Text className="text-base text-gray-500">Indonesia</Text>
+                        <Text className="text-base text-gray-500">{destination.location}</Text>
                     </View>
-                    <Text className="text-xl font-semibold mt-2 mb-6">Discover the Beauty of Banda Neira</Text>
+                    <Text className="text-xl font-semibold mt-2 mb-6">Discover the Beauty of {destination.location}</Text>
                     {testimonials.map((item, index) => (
                         <TestiCard key={index} name={item.name} review={item.testi} />
                     ))}
@@ -65,21 +91,21 @@ const DetailPage = () => {
             </ScrollView>
                     <BlurView intensity={100} tint="dark" style={styles.bottomContainer}>
                         <View className="flex-row justify-between items-center mb-5">
-                            <View className="flex-row items-center gap-x-3">
+                            <View className="flex-row items-center gap-x-6">
                             {/* Tombol Kurangi (-) */}
                             <TouchableOpacity 
-                                        className={`w-10 h-10 rounded-full items-center justify-center 
+                                        className={`w-8 h-8 rounded-full items-center justify-center 
                                                     ${qty === 1 ? 'bg-gray-600' : 'bg-[#FF7043]'}`}
                                         onPress={() => setQty(prev => Math.max(1, prev - 1))}
                                         disabled={qty === 1}
                                     >
                                 <Ionicons name="remove-outline" size={24} color="white" />
                             </TouchableOpacity>
-                            <Text className="text-white">{qty}</Text>
+                            <Text className="text-white text-2xl font-semibold">{qty}</Text>
 
                             {/* Tombol Tambah (+) */}
                             <TouchableOpacity 
-                                className="w-10 h-10 rounded-full items-center justify-center bg-white"
+                                className="w-8 h-8 rounded-full items-center justify-center bg-white"
                                 onPress={() => setQty(prev => prev + 1)}
                                 >
                                 <Ionicons name="add-outline" size={24} color="#FF7043" />

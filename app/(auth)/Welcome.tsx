@@ -4,7 +4,7 @@ import { ImageBackground, Text, View } from "react-native";
 import forestImg from '../../assets/images/forest.png';
 import CustomButton from '../../components/CustomButton';
 
-export default function Index() {
+export default function Welcome() {
   // const handleButtonPress = () => {
   //   // Alert.alert(
   //   //   "Under Maintenance",
@@ -32,7 +32,7 @@ export default function Index() {
               backgroundColor="bg-teal-500"
               textColor="text-black"
               width="w-[45%]"
-              onPress={() => router.push('/home/DetailPage')}
+              onPress={() => router.push('/home')}
             />
         </View>
       </LinearGradient>

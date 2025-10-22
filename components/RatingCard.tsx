@@ -1,11 +1,11 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { StyleSheet, Text, View } from "react-native";
 
-export default function RatingCard() {
+export default function RatingCard({rating = "5.0"}) {
     return (
         <View className="self-start flex-row py-2 px-4 rounded-full gap-x-2 bg-slate-600 opacity-80 items-center">
             <AntDesign name="star" size={24} color="white" />
-            <Text className="text-white text-2xl font-bold">5.0</Text>
+            <Text className="text-white text-2xl font-bold">{rating}</Text>
         </View>
     )
 }
