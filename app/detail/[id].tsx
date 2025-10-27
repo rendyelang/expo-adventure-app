@@ -1,37 +1,93 @@
+import { Destination, getDestinationById } from "@/assets/api/data";
 import BackButton from "@/components/BackButton";
 import CustomButton from "@/components/CustomButton";
 import RatingCard from "@/components/RatingCard";
 import RecommendCard from "@/components/RecommendCard";
 import TestiCard from "@/components/TestiCard";
 import { Text } from "@/components/Text";
-import destinations from "@/data/destinations";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { BlurView } from "expo-blur";
 import { useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
-import { ImageBackground, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, ImageBackground, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import CountryFlag from 'react-native-country-flag';
 
+// Peta lokal aset gambar
+const localImageMap = {
+    "labuan-bajo.png": require("../../assets/images/labuan-bajo.png"),
+    "venezia.png": require("../../assets/images/venezia.png"),
+    "amsterdam.png": require("../../assets/images/amsterdam.png"),
+    "banda-neira2.jpg": require("../../assets/images/banda-neira2.jpg"),
+};
+
 const DetailPage = () => {
-    const { id } = useLocalSearchParams();
+    // Hooks harus selalu di paling atas
+    const { id } = useLocalSearchParams()
+    const [destination, setDestination] = useState<Destination | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // FIX 1: Pindahkan Hook useState untuk qty ke atas
+    const [qty, setQty] = useState(1);
     
-    // Cari destinasi berdasarkan ID
-    const destination = destinations.find(item => item.id === parseInt(id));
-    
-    // Jika tidak ditemukan, tampilkan pesan error
-    if (!destination) {
+    // Variabel kalkulasi (tidak perlu menjadi Hook)
+    // Jika destination belum ada, gunakan harga default (misalnya 4000)
+    const basePrice = destination?.price ?? 4000;
+    const totalAmount = qty * basePrice;
+
+
+    useEffect(() => {
+        if (!id || Array.isArray(id)) return;
+
+        (async () => {
+        try {
+            setError(null);
+            const data = await getDestinationById(id);
+            setDestination(data);
+            setLoading(false); // Pindahkan setLoading(false) ke sini
+        } catch (e: any) {
+            setError(e.message || 'Failed to load detail');
+            setLoading(false); // Pindahkan setLoading(false) ke sini
+        }
+        // Hapus finally block
+        })();
+    }, [id]);
+
+    // FIX 2 & 3: Panggil imageSource HANYA setelah loading selesai dan destination ada
+    let imageSource = null;
+    if (destination && destination.image) {
+        // Ambil nama file dari path API yang lama (e.g. "labuan-bajo.png")
+        const filename = destination.image.split('/').pop() || '';
+        imageSource = localImageMap[filename];
+        
+        if (!imageSource) {
+            console.error(`Local image not found for filename: ${filename}`);
+            // Tambahkan fallback jika gambar tidak ditemukan
+        }
+    }
+
+
+    // KONDISI RETURN AWAL
+    if (loading) {
         return (
-            <View className="bg-bg-base flex-1 justify-center items-center">
-                <Text className="text-white text-xl">Destination not found</Text>
+            <View className="flex-1 justify-center items-center bg-bg-base">
+                <ActivityIndicator size="large" color="#FF7043" />
+                <Text className="text-white mt-2">Loading detail…</Text>
+            </View>
+        );
+    }
+    
+    // Ini mencakup if (error) dan if (!destination)
+    if (error || !destination || !imageSource) {
+        return (
+            <View className="flex-1 justify-center items-center bg-bg-base">
+                <Text className="text-white">Error: {error ?? 'Destination or image not found'}</Text>
             </View>
         );
     }
 
-    const [qty, setQty] = useState(1)
-    const basePrice = 10000
-    const totalAmount = qty * basePrice
-
-     const handleBookNow = () => {
+    // Logic sisanya
+    const handleBookNow = () => {
         alert(`Booking ${qty} items with total cost $${totalAmount}`);
     };
 
@@ -47,8 +103,8 @@ const DetailPage = () => {
     ]
 
     // Mapping country code dari location
-    const getCountryCode = (location) => {
-        const countryMap = {
+    const getCountryCode = (location: string) => {
+        const countryMap: { [key: string]: string } = {
             'Indonesia': 'ID',
             'Italy': 'IT',
             'Netherlands': 'NL'
@@ -57,9 +113,11 @@ const DetailPage = () => {
     };
 
     return (
-        <View className="bg-bg-base">
+        <View className="bg-bg-base flex-1">
             <ScrollView>
-                <ImageBackground className="px-7 py-10" source={destination.image} resizeMode="cover">
+                {/* FIX 4: Pastikan imageSource sudah didefinisikan dan digunakan di sini */}
+                <ImageBackground className="px-7 py-10" source={imageSource} resizeMode="cover">
+                    {/* ... (rest of the component logic) ... */}
                     <View className="flex-row justify-between">
                         <BackButton />
                         <View style={[styles.weatherContainer]}>
@@ -89,47 +147,49 @@ const DetailPage = () => {
                     <RecommendCard />
                 </View>
             </ScrollView>
-                    <BlurView intensity={100} tint="dark" style={styles.bottomContainer}>
-                        <View className="flex-row justify-between items-center mb-5">
-                            <View className="flex-row items-center gap-x-6">
-                            {/* Tombol Kurangi (-) */}
-                            <TouchableOpacity 
-                                        className={`w-8 h-8 rounded-full items-center justify-center 
-                                                    ${qty === 1 ? 'bg-gray-600' : 'bg-[#FF7043]'}`}
-                                        onPress={() => setQty(prev => Math.max(1, prev - 1))}
-                                        disabled={qty === 1}
-                                    >
-                                <Ionicons name="remove-outline" size={24} color="white" />
-                            </TouchableOpacity>
-                            <Text className="text-white text-2xl font-semibold">{qty}</Text>
+            <BlurView intensity={100} tint="dark" style={styles.bottomContainer}>
+                <View className="flex-row justify-between items-center mb-5">
+                    <View className="flex-row items-center gap-x-6">
+                    {/* Tombol Kurangi (-) */}
+                    <TouchableOpacity 
+                            className={`w-8 h-8 rounded-full items-center justify-center 
+                                ${qty === 1 ? 'bg-gray-600' : 'bg-[#FF7043]'}`}
+                            onPress={() => setQty(prev => Math.max(1, prev - 1))}
+                            disabled={qty === 1}
+                        >
+                        <Ionicons name="remove-outline" size={24} color="white" />
+                    </TouchableOpacity>
+                    <Text className="text-white text-2xl font-semibold">{qty}</Text>
 
-                            {/* Tombol Tambah (+) */}
-                            <TouchableOpacity 
-                                className="w-8 h-8 rounded-full items-center justify-center bg-white"
-                                onPress={() => setQty(prev => prev + 1)}
-                                >
-                                <Ionicons name="add-outline" size={24} color="#FF7043" />
-                            </TouchableOpacity>
-                            </View>
-                            <View>
-                                <Text className="text-white font-semibold">Total Amount</Text>
-                                <Text className="text-white font-bold text-2xl">${totalAmount}</Text>
-                            </View>
-                        </View>
-                        <CustomButton 
-                                title="Book Now"
-                                backgroundColor="bg-[#FF7043]"
-                                textColor="text-white"
-                                width="w-[100%]"
-                                onPress={() => handleBookNow()}
-                        />
-                    </BlurView>
+                    {/* Tombol Tambah (+) */}
+                    <TouchableOpacity 
+                        className="w-8 h-8 rounded-full items-center justify-center bg-white"
+                        onPress={() => setQty(prev => prev + 1)}
+                        >
+                        <Ionicons name="add-outline" size={24} color="#FF7043" />
+                    </TouchableOpacity>
+                    </View>
+                    <View>
+                        <Text className="text-white font-semibold">Total Amount</Text>
+                        <Text className="text-white font-bold text-2xl">${totalAmount}</Text>
+                    </View>
+                </View>
+                <CustomButton 
+                        title="Book Now"
+                        backgroundColor="bg-[#FF7043]"
+                        textColor="text-white"
+                        width="w-[100%]"
+                        onPress={() => handleBookNow()}
+                />
+            </BlurView>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-  weatherContainer: {
+// ... (styles tetap sama)
+// ... (styles tetap sama)
+ weatherContainer: {
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "flex-start",
@@ -145,14 +205,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   flagWrapper: {
-    width: 34,           // Lebih besar dari size bendera (30+2+2) untuk menampung border
+    width: 34,
     height: 34,
-    borderRadius: 17,    // Setengah dari width/height
+    borderRadius: 17,
     overflow: 'hidden',
     borderWidth: 2,
     borderColor: '#333',
-    // Perlu menyejajarkan CountryFlag di tengah jika ukuran wrapper > ukuran flag
-    justifyContent: 'center', 
+    justifyContent: 'center',
     alignItems: 'center',
   },
   bottomContainer: {
@@ -165,8 +224,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     overflow: "hidden",
-    // efek visual tambahan
-    backgroundColor: "rgba(30, 41, 59, 0.5)", // semi transparan
+    backgroundColor: "rgba(30, 41, 59, 0.5)",
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.1)",
     shadowColor: "#000",

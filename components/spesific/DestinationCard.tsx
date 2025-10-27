@@ -7,6 +7,14 @@ import { useRouter } from 'expo-router';
 import { ImageBackground, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "../Text";
 
+// 1. Create a map for local assets
+const localImageMap = {
+    "labuan-bajo.png": require("../../assets/images/labuan-bajo.png"),
+    "venezia.png": require("../../assets/images/venezia.png"),
+    "amsterdam.png": require("../../assets/images/amsterdam.png"),
+    "banda-neira2.jpg": require("../../assets/images/banda-neira2.jpg"),
+    // Add all your image filenames here
+};
 
 export default function DestinationCard({item}) {
     const router = useRouter();
@@ -17,9 +25,17 @@ export default function DestinationCard({item}) {
         toggleLike(item);
     };
 
+    const imageSource = localImageMap[item.image]
+
+    // 3. Check if the image source exists before rendering
+    if (!imageSource) {
+        console.error(`Local image not found for filename: ${item.image}`);
+        return <View style={{ height: 200, backgroundColor: '#ccc' }} />; // Render a fallback
+    }
+
     return (
         <TouchableOpacity onPress={() => router.push({pathname: '/detail/[id]', params: {id: item.id}})} className="rounded-2xl overflow-hidden relative mb-4">
-            <ImageBackground className="px-6 pt-36 pb-6 relative" resizeMode="cover" source={item.image}>
+            <ImageBackground className="px-6 pt-36 pb-6 relative" resizeMode="cover" source={imageSource}>
                 <TouchableOpacity onPress={handleLike} className='rounded-full overflow-hidden self-start absolute z-10 top-3 right-3'>
                     <BlurView intensity={100} tint='dark' className='p-2'>
                         {/* <EvilIcons name="heart" size={24} color="white" /> */}

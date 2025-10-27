@@ -5,10 +5,11 @@ import FilterBtn from '@/components/spesific/FilterBtn';
 import PlanCard from '@/components/spesific/PlanCard';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
 import { Text } from "../../../components/Text";
-import destinations from "../../../data/destinations";
+// import destinations from "../../../data/destinations";
+import { Destination, getDestinations } from '@/assets/api/data';
 
 
 const Home = () => {
@@ -16,7 +17,51 @@ const Home = () => {
     const { likedCount } = useLiked();
     const router = useRouter();
 
-    const filteredDestinations = destinations.filter(item => {
+    const [data, setData] = useState<Destination[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const load = async () => {
+        try {
+            setError(null);
+            const destinations = await getDestinations();
+            setData(destinations);
+        } catch (e: any) {
+            setError(e.message || 'Failed to load')
+        } finally {
+            setLoading(false)
+            setRefreshing(false)
+        }
+    }
+
+    useEffect(() => {
+        load()
+    }, [])
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true)
+        load()
+    }, [])
+
+    if (loading) {
+        return (
+            <View className='flex-1 items-center justify-center gap-y-5'>
+                <ActivityIndicator />
+                <Text>Loading destinations...</Text>
+            </View>
+        )
+    }
+
+    if (error) {
+        return (
+            <View>
+                <Text>Error..</Text>
+            </View>
+        )
+    }
+
+    const filteredDestinations = data.filter(item => {
         const query = searchQuery.toLowerCase()
         return (
             item.name.toLowerCase().includes(query) ||
