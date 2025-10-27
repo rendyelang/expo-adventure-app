@@ -2,6 +2,9 @@
 
 This is an assignment of mobile programming subject
 
+## App Demonstration
+Access the app demonstration [here.](https://drive.google.com/file/d/1sF_Hf-NGH-D6ff_fVNkRz0cRnx1463xW/view?usp=drivesdk)
+
 ## Splash & Welcome Screen
 <p align="center">
   <img src="https://github.com/user-attachments/assets/880fc19d-baca-4f62-97ea-b5e57114eeac" alt="Splash Screen" width="45%" />
